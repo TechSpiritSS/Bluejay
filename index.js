@@ -3,7 +3,7 @@ const fs = require('fs');
 const {findConsecutiveDays, findLongShifts, findShortBreaks} = require("./utils/gap");
 
 const inputFile = './data.csv';
-
+const outputFile = './output.txt';
 
 // Function to analyze the data and print results
 const analyzeFile = (jsonArrayObj) => {
@@ -30,6 +30,8 @@ const analyzeFile = (jsonArrayObj) => {
     });
 
     // Analyze and print results
+    const consoleOutput = [];
+
     Object.keys(employees).forEach((employeeName) => {
         const employee = employees[employeeName];
         const consecutiveDays = findConsecutiveDays(employee.shifts);
@@ -37,17 +39,20 @@ const analyzeFile = (jsonArrayObj) => {
         const longShifts = findLongShifts(employee.shifts);
 
         if (consecutiveDays.length === 7) {
-            console.log(`${employeeName} has worked for 7 consecutive days.`);
+            consoleOutput.push(`${employeeName} has worked for 7 consecutive days.`);
         }
 
         if (shortBreaks.length > 0) {
-            console.log(`${employeeName} has less than 10 hours between shifts on the following days: ${shortBreaks.join(', ')}`);
+            consoleOutput.push(`${employeeName} has less than 10 hours between shifts on the following days: ${shortBreaks.join(', ')}`);
         }
 
         if (longShifts.length > 0) {
-            console.log(`${employeeName} has worked for more than 14 hours on the following days: ${longShifts.join(', ')}`);
+            consoleOutput.push(`${employeeName} has worked for more than 14 hours on the following days: ${longShifts.join(', ')}`);
         }
     });
+
+    fs.writeFileSync(outputFile, consoleOutput.join('\n'));
+    console.log(`Analysis results written to: ${outputFile}`);
 };
 
 
